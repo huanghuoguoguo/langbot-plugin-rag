@@ -3,23 +3,23 @@ kind: Plugin
 metadata:
   author: langbot-app
   name: langbot-plugin-rag
-  repository: ''
+  repository: 'https://github.com/langbot-app/langbot-plugin-rag'
   version: 0.1.0
   description:
-    en_US: 'langbot-plugin-rag'
-    zh_Hans: 'langbot-plugin-rag'
+    en_US: 'Official LangBot RAG Engine - Document ingestion and retrieval using Host infrastructure'
+    zh_Hans: '官方 LangBot RAG 引擎 - 使用宿主基础设施进行文档摄入和检索'
   label:
-    en_US: langbot plugin rag
-    zh_Hans: langbot plugin rag
-  icon: assets/icon.svg  # replace in assets/icon.svg
+    en_US: LangRAG (Official)
+    zh_Hans: LangRAG (官方)
+  icon: assets/icon.svg
+
 spec:
   config: []
   components:
-    rag_engine:
-      name:
-        en_US: Official RAG Engine
-        zh_Hans: 官方RAG引擎
-      path: components.rag_engine.LangRAG
+    RAGEngine:
+      fromDirs:
+        - path: components/rag_engine/
+
 execution:
   python:
     path: main.py

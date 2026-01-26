@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: RAGEngine
+metadata:
+  name: langrag
+  label:
+    en_US: LangRAG
+    zh_Hans: LangRAG
+  description:
+    en_US: Official LangBot RAG Engine with document chunking and vector retrieval
+    zh_Hans: 官方 LangBot RAG 引擎，支持文档分块和向量检索
+execution:
+  python:
+    path: langrag.py
+    attr: LangRAG

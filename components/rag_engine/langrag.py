@@ -1,7 +1,7 @@
 import logging
 from typing import Any, List
 
-from langbot_plugin.api.definition.components.knowledge_retriever import RAGEngine
+from langbot_plugin.api.definition.components.knowledge_retriever import RAGEngine, RAGEngineCapability
 from langbot_plugin.api.entities.builtin.rag import (
     IngestionContext,
     IngestionResult,
@@ -16,7 +16,40 @@ logger = logging.getLogger(__name__)
 class LangRAG(RAGEngine):
     """
     Official LangBot RAG Engine implementation using Plugin IPC.
+
+    This is the default RAG engine shipped with LangBot, providing:
+    - Document ingestion with chunking
+    - Vector-based retrieval
+    - Integration with Host's embedding models and vector database
     """
+
+    @classmethod
+    def get_capabilities(cls) -> list[str]:
+        """Declare supported capabilities."""
+        return [RAGEngineCapability.DOC_INGESTION]
+
+    async def on_knowledge_base_create(self, kb_id: str, config: dict) -> None:
+        """
+        Called when a knowledge base using this engine is created.
+
+        Args:
+            kb_id: The UUID of the newly created knowledge base
+            config: Creation settings from get_creation_settings_schema()
+        """
+        logger.info(f"Knowledge base created: {kb_id} with config: {config}")
+        # The Host handles collection creation in the vector database.
+        # This hook can be used for engine-specific initialization if needed.
+
+    async def on_knowledge_base_delete(self, kb_id: str) -> None:
+        """
+        Called when a knowledge base using this engine is deleted.
+
+        Args:
+            kb_id: The UUID of the knowledge base being deleted
+        """
+        logger.info(f"Knowledge base deleted: {kb_id}")
+        # The Host handles collection cleanup in the vector database.
+        # This hook can be used for engine-specific cleanup if needed.
 
     async def ingest(self, context: IngestionContext) -> IngestionResult:
         """
