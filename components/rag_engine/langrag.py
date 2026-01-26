@@ -1,5 +1,4 @@
 import logging
-import base64
 from typing import Any, List
 
 from langbot_plugin.api.definition.components.knowledge_retriever import RAGEngine
@@ -24,19 +23,13 @@ class LangRAG(RAGEngine):
         Handle document ingestion: Read -> Parse -> Chunk -> Embed -> Store.
         """
         logger.info(f"Ingesting file: {context.file_object.metadata.filename} into KB: {context.knowledge_base_id}")
-        
+
         # 1. Get file content from Host
         storage_path = context.file_object.storage_path
         content_bytes = b""
         try:
-             # Returns base64 string
-             result = await self.plugin.rag_get_file_stream(storage_path)
-             if isinstance(result, dict) and 'content_base64' in result:
-                 content_bytes = base64.b64decode(result['content_base64'])
-             else:
-                 # Fallback/Direct bytes if SDK handles decoding automatically (check SDK implementation)
-                 # Assuming raw dict return for now based on handler.py
-                 raise ValueError("Invalid response from rag_get_file_stream")
+            # SDK's rag_get_file_stream already decodes base64 and returns bytes
+            content_bytes = await self.plugin.rag_get_file_stream(storage_path)
 
         except Exception as e:
             logger.error(f"Failed to get file content: {e}")
