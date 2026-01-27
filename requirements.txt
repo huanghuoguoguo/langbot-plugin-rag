@@ -1,1 +1,14 @@
 langbot-plugin
+
+# LangRAG - Install from GitHub with version tag
+# 方式1: 指定版本 tag (推荐)
+langrag @ git+https://github.com/huanghuoguoguo/langrag.git@v0.1.0
+
+# 方式2: 指定 commit hash
+# langrag @ git+https://github.com/huanghuoguoguo/langrag.git@abc1234
+
+# 方式3: 最新 main 分支 (开发用)
+# langrag @ git+https://github.com/huanghuoguoguo/langrag.git@main
+
+# 方式4: 本地开发
+# langrag @ file:///home/yhh/workspace/LangRAG
