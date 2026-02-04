@@ -8,7 +8,32 @@ metadata:
   description:
     en_US: Official LangBot RAG Engine with document chunking and vector retrieval
     zh_Hans: 官方 LangBot RAG 引擎，支持文档分块和向量检索
-spec: {}
+spec:
+  creation_schema:
+    - name: embedding_model_uuid
+      label:
+        en_US: Embedding Model
+        zh_Hans: 嵌入模型
+      description:
+        en_US: Select embedding model for text vectorization
+        zh_Hans: 选择用于文本向量化的嵌入模型
+      type: embedding-model-selector
+      required: true
+      default: ""
+    - name: chunk_size
+      label:
+        en_US: Chunk Size
+        zh_Hans: 分块大小
+      type: integer
+      required: false
+      default: 512
+    - name: overlap
+      label:
+        en_US: Chunk Overlap
+        zh_Hans: 分块重叠
+      type: integer
+      required: false
+      default: 50
 execution:
   python:
     path: langrag.py

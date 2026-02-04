@@ -59,6 +59,7 @@ class LangRAG(RAGEngine):
 
         # 1. Get file content from Host
         storage_path = context.file_object.storage_path
+        filename = context.file_object.metadata.filename
         content_bytes = b""
         try:
             # SDK's rag_get_file_stream already decodes base64 and returns bytes
@@ -73,14 +74,20 @@ class LangRAG(RAGEngine):
             )
 
         try:
-            # 2. Parse and Chunk
-            text_content = ""
-            try:
-                text_content = content_bytes.decode('utf-8')
-            except UnicodeDecodeError:
-                text_content = "Binary content placeholder" 
+            # 2. Parse file content using FileParser
+            from .core.parser import FileParser
+            parser = FileParser()
+            text_content = await parser.parse(content_bytes, filename)
             
-            # Simple chunking
+            if not text_content:
+                logger.warning(f"No text content extracted from file: {filename}")
+                return IngestionResult(
+                    document_id=context.file_object.metadata.document_id,
+                    status=DocumentStatus.COMPLETED,
+                    chunks_created=0
+                )
+            
+            # 3. Chunk the text content
             chunk_size = context.chunk_size or 512
             chunks = [text_content[i:i+chunk_size] for i in range(0, len(text_content), chunk_size)]
             
@@ -174,31 +181,39 @@ class LangRAG(RAGEngine):
         # Result is like {'count': N}
         return isinstance(result, dict) and result.get('count', 0) > 0
 
-    def get_creation_settings_schema(self) -> dict:
-        return {
-            "type": "object",
-            "properties": {
-                "chunk_size": {
-                    "type": "integer",
-                    "default": 512,
-                    "title": "Chunk Size"
-                },
-                "overlap": {
-                    "type": "integer",
-                    "default": 50,
-                    "title": "Chunk Overlap"
-                }
+    def get_creation_settings_schema(self) -> list[dict]:
+        return [
+            {
+                "name": "embedding_model_uuid",
+                "label": {"en_US": "Embedding Model", "zh_Hans": "嵌入模型"},
+                "description": {"en_US": "Select embedding model for text vectorization", "zh_Hans": "选择用于文本向量化的嵌入模型"},
+                "type": "embedding-model-selector",
+                "required": True,
+                "default": "",
+            },
+            {
+                "name": "chunk_size",
+                "label": {"en_US": "Chunk Size", "zh_Hans": "分块大小"},
+                "type": "integer",
+                "required": False,
+                "default": 512,
+            },
+            {
+                "name": "overlap",
+                "label": {"en_US": "Chunk Overlap", "zh_Hans": "分块重叠"},
+                "type": "integer",
+                "required": False,
+                "default": 50,
             }
-        }
+        ]
 
-    def get_retrieval_settings_schema(self) -> dict:
-        return {
-             "type": "object",
-            "properties": {
-                "top_k": {
-                    "type": "integer",
-                    "default": 5,
-                    "title": "Top K"
-                }
+    def get_retrieval_settings_schema(self) -> list[dict]:
+        return [
+            {
+                "name": "top_k",
+                "label": {"en_US": "Top K", "zh_Hans": "召回数量"},
+                "type": "integer",
+                "required": False,
+                "default": 5,
             }
-        }
+        ]
