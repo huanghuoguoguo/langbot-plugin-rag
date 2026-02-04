@@ -8,6 +8,7 @@ metadata:
   description:
     en_US: Official LangBot RAG Engine with document chunking and vector retrieval
     zh_Hans: 官方 LangBot RAG 引擎，支持文档分块和向量检索
+spec: {}
 execution:
   python:
     path: langrag.py

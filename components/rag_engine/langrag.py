@@ -1,7 +1,7 @@
 import logging
 from typing import Any, List
 
-from langbot_plugin.api.definition.components.knowledge_retriever import RAGEngine, RAGEngineCapability
+from langbot_plugin.api.definition.components.rag_engine import RAGEngine, RAGEngineCapability
 from langbot_plugin.api.entities.builtin.rag import (
     IngestionContext,
     IngestionResult,
