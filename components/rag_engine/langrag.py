@@ -98,9 +98,15 @@ class LangRAG(RAGEngine):
                     chunks_created=0
                 )
 
-            # 3. Embed
+            # 3. Embed in batches to avoid timeout
             # self.plugin.rag_embed_documents(kb_id, texts)
-            vectors = await self.plugin.rag_embed_documents(context.knowledge_base_id, chunks)
+            vectors = []
+            # Use specific batch size to avoid IPC timeouts with large documents
+            BATCH_SIZE = 10 
+            for i in range(0, len(chunks), BATCH_SIZE):
+                batch_chunks = chunks[i : i + BATCH_SIZE]
+                batch_vectors = await self.plugin.rag_embed_documents(context.knowledge_base_id, batch_chunks)
+                vectors.extend(batch_vectors)
             
             # 4. Store
             doc_id = context.file_object.metadata.document_id
@@ -109,6 +115,7 @@ class LangRAG(RAGEngine):
             
             metadatas = [{
                 "document_id": doc_id,
+                "document_name": filename,
                 "chunk_index": i,
                 "text": chunk
             } for i, chunk in enumerate(chunks)]
