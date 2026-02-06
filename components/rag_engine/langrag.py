@@ -159,12 +159,18 @@ class LangRAG(RAGEngine):
         for res in results:
             # metadata usually contains 'text' if we stored it there
             content_text = res.get('metadata', {}).get('text', '')
+            
+            # The underlying vector store (Chroma) returns 'score' which is actually the distance (lower is better)
+            # So we use it as distance if the explicit 'distance' field is missing.
+            raw_score = res.get('score')
+            distance = res.get('distance', raw_score)
+            
             entries.append(RetrievalResultEntry(
                 id=res['id'],
                 content=[{"type": "text", "text": content_text}],
                 metadata=res.get('metadata', {}),
-                score=res.get('score'),
-                distance=0.0
+                score=raw_score,
+                distance=distance
             ))
             
         return RetrievalResponse(
