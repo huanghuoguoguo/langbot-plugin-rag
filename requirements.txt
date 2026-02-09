@@ -1,4 +1,4 @@
-langbot-plugin>=0.2.5
+langbot-plugin>=0.2.6
 langrag @ git+https://github.com/huanghuoguoguo/LangRAG.git@main
 PyPDF2>=3.0.0
 python-docx>=0.8.11
