@@ -20,6 +20,7 @@ spec:
       type: embedding-model-selector
       required: true
       default: ''
+      editable: false
     - name: chunk_size
       label:
         en_US: Chunk Size
@@ -27,6 +28,7 @@ spec:
       type: integer
       required: false
       default: 512
+      editable: false
     - name: overlap
       label:
         en_US: Chunk Overlap
@@ -34,6 +36,7 @@ spec:
       type: integer
       required: false
       default: 50
+      editable: false
   retrieval_schema:
     - name: top_k
       label:
